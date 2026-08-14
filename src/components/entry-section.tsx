@@ -26,7 +26,7 @@ export function EntrySection({ entry }: { entry: Entry }) {
               alt={entry.logo.alt}
               width={entry.logo.width}
               height={entry.logo.height}
-              sizes="(min-width: 768px) 40vw, 80vw"
+              sizes="288px"
               className="max-h-20 w-auto max-w-72"
             />
             <div className="mt-6 space-y-4 text-lg leading-relaxed text-foreground/90">
@@ -56,7 +56,7 @@ export function EntrySection({ entry }: { entry: Entry }) {
               alt={entry.banner.alt}
               width={entry.banner.width}
               height={entry.banner.height}
-              sizes="(min-width: 768px) 50vw, 100vw"
+              sizes="(min-width: 1152px) 520px, (min-width: 768px) 50vw, 100vw"
               className="max-h-[32rem] w-full rounded-2xl object-cover"
             />
           ) : null}

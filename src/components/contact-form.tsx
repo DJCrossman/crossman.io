@@ -18,7 +18,6 @@ import type { ContactField, ContactFormState } from "@/lib/contact-schema";
 const initialState: ContactFormState = { status: "idle" };
 
 export function ContactForm() {
-  const formRef = React.useRef<HTMLFormElement>(null);
   const [state, formAction, pending] = React.useActionState(
     submitContact,
     initialState,
@@ -27,7 +26,6 @@ export function ContactForm() {
   React.useEffect(() => {
     if (state.status === "success") {
       toast.success("Thanks for reaching out — I'll get back to you soon!");
-      formRef.current?.reset();
     } else if (state.status === "error" && state.message) {
       toast.error(state.message);
     }
@@ -36,8 +34,15 @@ export function ContactForm() {
   const errorFor = (field: ContactField) =>
     state.status === "error" ? state.errors?.[field] : undefined;
 
+  // React 19 resets uncontrolled fields whenever the form action completes,
+  // so after an error we repopulate via defaultValue from the echoed values.
+  const valueFor = (field: ContactField) =>
+    state.status === "error" ? state.values?.[field] : undefined;
+
+  const messageError = errorFor("message");
+
   return (
-    <form ref={formRef} action={formAction} className="mt-10 text-left">
+    <form action={formAction} className="mt-10 text-left">
       <FieldGroup>
         <div className="grid gap-5 sm:grid-cols-2">
           <ContactInput
@@ -45,12 +50,14 @@ export function ContactForm() {
             label="First Name"
             autoComplete="given-name"
             error={errorFor("firstName")}
+            defaultValue={valueFor("firstName")}
           />
           <ContactInput
             name="lastName"
             label="Last Name"
             autoComplete="family-name"
             error={errorFor("lastName")}
+            defaultValue={valueFor("lastName")}
           />
         </div>
         <ContactInput
@@ -59,23 +66,27 @@ export function ContactForm() {
           type="email"
           autoComplete="email"
           error={errorFor("email")}
+          defaultValue={valueFor("email")}
         />
         <ContactInput
           name="subject"
           label="Subject"
           error={errorFor("subject")}
+          defaultValue={valueFor("subject")}
         />
-        <Field data-invalid={Boolean(errorFor("message")) || undefined}>
+        <Field data-invalid={Boolean(messageError) || undefined}>
           <FieldLabel htmlFor="contact-message">Message</FieldLabel>
           <Textarea
             id="contact-message"
             name="message"
             required
             rows={6}
-            aria-invalid={Boolean(errorFor("message")) || undefined}
+            defaultValue={valueFor("message")}
+            aria-invalid={Boolean(messageError) || undefined}
+            aria-describedby={messageError ? "contact-message-error" : undefined}
           />
-          {errorFor("message") ? (
-            <FieldError>{errorFor("message")}</FieldError>
+          {messageError ? (
+            <FieldError id="contact-message-error">{messageError}</FieldError>
           ) : null}
         </Field>
 
@@ -108,12 +119,14 @@ function ContactInput({
   name,
   label,
   error,
+  defaultValue,
   type = "text",
   autoComplete,
 }: {
   name: ContactField;
   label: string;
   error?: string;
+  defaultValue?: string;
   type?: string;
   autoComplete?: string;
 }) {
@@ -127,9 +140,11 @@ function ContactInput({
         type={type}
         required
         autoComplete={autoComplete}
+        defaultValue={defaultValue}
         aria-invalid={Boolean(error) || undefined}
+        aria-describedby={error ? `${id}-error` : undefined}
       />
-      {error ? <FieldError>{error}</FieldError> : null}
+      {error ? <FieldError id={`${id}-error`}>{error}</FieldError> : null}
     </Field>
   );
 }

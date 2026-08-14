@@ -90,6 +90,17 @@
   * {
     @apply border-border outline-ring/50;
   }
+  /* Collapse all animation for users who prefer reduced motion (covers
+     the Sheet drawer transitions and any future animated component). */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
   body {
     @apply bg-background text-foreground;
   }

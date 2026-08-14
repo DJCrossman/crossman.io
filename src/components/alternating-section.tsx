@@ -11,7 +11,7 @@ export function AlternatingSection({ section }: { section: HomeSection }) {
         alt={section.image.alt}
         width={section.image.width}
         height={section.image.height}
-        sizes="(min-width: 768px) 50vw, 100vw"
+        sizes="(min-width: 1152px) 520px, (min-width: 768px) 50vw, 100vw"
         className={cn(
           "w-full rounded-2xl object-cover",
           section.imageSide === "right" && "md:order-last",

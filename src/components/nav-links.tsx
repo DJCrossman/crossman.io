@@ -24,6 +24,7 @@ export function NavLinks({
           key={link.href}
           href={link.href}
           onClick={onNavigate}
+          aria-current={pathname === link.href ? "page" : undefined}
           className={cn(
             "font-heading text-sm font-bold lowercase tracking-wide underline-offset-8 transition-colors hover:text-foreground",
             pathname === link.href
