@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { AlternatingSection } from "@/components/alternating-section";
+import { ContactForm } from "@/components/contact-form";
 import { Hero } from "@/components/hero";
 import { VideoSection } from "@/components/video-section";
 import {
@@ -59,7 +60,7 @@ export default function Home() {
       >
         <h2 className="text-4xl md:text-5xl">{contact.title}</h2>
         <p className="mt-4 text-lg text-foreground/80">{contact.subtitle}</p>
-        {/* Contact form lands in the next PR in the stack */}
+        <ContactForm />
       </section>
     </>
   );
