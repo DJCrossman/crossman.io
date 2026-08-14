@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { usePathname } from "next/navigation";
 import { MenuIcon } from "lucide-react";
 
 import { NavLinks } from "@/components/nav-links";
@@ -15,6 +16,13 @@ import {
 
 export function MobileNav() {
   const [open, setOpen] = React.useState(false);
+  const pathname = usePathname();
+
+  // Close the drawer whenever navigation happens, regardless of how the
+  // link click was dispatched.
+  React.useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
