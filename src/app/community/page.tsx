@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   title: "Community",
   description:
     "Things David Crossman has helped out with in the Regina tech community — HackRegina and the MSI Computer Camps.",
+  alternates: { canonical: "/community" },
+  openGraph: { url: "/community" },
 };
 
 export default function CommunityPage() {

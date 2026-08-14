@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   title: "Work",
   description:
     "Things David Crossman has worked on — from startups he founded to product teams at Offstreet, Sticker Mule, Citrus, Vivvo, and iQmetrix.",
+  alternates: { canonical: "/work" },
+  openGraph: { url: "/work" },
 };
 
 export default function WorkPage() {
