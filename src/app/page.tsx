@@ -13,6 +13,7 @@ import {
   touchGrass,
 } from "@/content/home";
 import { siteName, siteUrl, socialLinks } from "@/content/site";
+import { videoFileExists } from "@/lib/videos";
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -48,7 +49,7 @@ export default function Home() {
         <AlternatingSection key={section.title} section={section} />
       ))}
 
-      <VideoSection video={homeVideo} />
+      {videoFileExists(homeVideo.src) ? <VideoSection video={homeVideo} /> : null}
 
       <section className="mx-auto max-w-6xl px-6 py-16 md:py-24">
         <h2 className="text-4xl md:text-5xl">{touchGrass.title}</h2>
