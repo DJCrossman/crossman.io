@@ -9,7 +9,9 @@ export function Hero({ title, image }: { title: string; image: ImageAsset }) {
         src={image.src}
         alt={image.alt}
         fill
-        priority
+        preload
+        loading="eager"
+        fetchPriority="high"
         sizes="100vw"
         className="object-cover"
       />

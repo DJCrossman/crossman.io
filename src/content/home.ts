@@ -63,7 +63,7 @@ export const homeSections: HomeSection[] = [
  */
 export const homeVideo: VideoAsset = {
   src: "/videos/home-bg.mp4",
-  poster: "/images/home/hero.jpg",
+  poster: "/images/home/video-poster.jpg",
 };
 
 export const touchGrass = {

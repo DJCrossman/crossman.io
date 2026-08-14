@@ -3,11 +3,16 @@ import Image from "next/image";
 import { VideoSection } from "@/components/video-section";
 import { Button } from "@/components/ui/button";
 import type { Entry } from "@/content/types";
+import { videoFileExists } from "@/lib/videos";
 
 export function EntrySection({ entry }: { entry: Entry }) {
+  const video =
+    entry.video && videoFileExists(entry.video.src) ? entry.video : undefined;
+
   return (
     <article className="border-t border-border/60">
       <div className="mx-auto max-w-6xl px-6 py-16 md:py-24">
+        <h2 className="sr-only">{entry.name}</h2>
         {entry.years ? (
           <p className="font-heading text-xl font-bold text-foreground/70">
             {entry.years}
@@ -55,8 +60,8 @@ export function EntrySection({ entry }: { entry: Entry }) {
               className="max-h-[32rem] w-full rounded-2xl object-cover"
             />
           ) : null}
-          {entry.video && !entry.banner ? (
-            <VideoSection video={entry.video} className="max-w-none px-0 py-0" />
+          {video && !entry.banner ? (
+            <VideoSection video={video} className="max-w-none px-0 py-0" />
           ) : null}
         </div>
 
