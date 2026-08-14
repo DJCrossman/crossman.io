@@ -23,13 +23,35 @@ export function ContactForm() {
     initialState,
   );
 
+  // Signed timestamp for the server's minimum-fill-time check. Fetched
+  // when the visitor first interacts with the form (keeps the page fully
+  // static) and refreshed after any error so resubmits carry a live token.
+  const [token, setToken] = React.useState("");
+  const fetchToken = React.useCallback(() => {
+    fetch("/api/contact-token")
+      .then((response) => response.json())
+      .then((data: { token: string }) => setToken(data.token))
+      .catch(() => {
+        // Leave the token empty; the server treats it as expired and
+        // asks the visitor to submit again.
+      });
+  }, []);
+
+  const touchedRef = React.useRef(false);
+  const handleFirstInteraction = () => {
+    if (touchedRef.current) return;
+    touchedRef.current = true;
+    fetchToken();
+  };
+
   React.useEffect(() => {
     if (state.status === "success") {
       toast.success("Thanks for reaching out — I'll get back to you soon!");
-    } else if (state.status === "error" && state.message) {
-      toast.error(state.message);
+    } else if (state.status === "error") {
+      if (state.message) toast.error(state.message);
+      fetchToken();
     }
-  }, [state]);
+  }, [state, fetchToken]);
 
   const errorFor = (field: ContactField) =>
     state.status === "error" ? state.errors?.[field] : undefined;
@@ -42,7 +64,12 @@ export function ContactForm() {
   const messageError = errorFor("message");
 
   return (
-    <form action={formAction} className="mt-10 text-left">
+    <form
+      action={formAction}
+      onFocusCapture={handleFirstInteraction}
+      className="mt-10 text-left"
+    >
+      <input type="hidden" name="token" value={token} />
       <FieldGroup>
         <div className="grid gap-5 sm:grid-cols-2">
           <ContactInput
