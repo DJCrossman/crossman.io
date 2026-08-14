@@ -12,6 +12,26 @@ const TO_ADDRESS = "david@crossman.io";
 // Switch to contact@crossman.io once the domain is verified in Resend.
 const FROM_ADDRESS = "Portfolio <onboarding@resend.dev>";
 
+const CONTACT_FIELDS = [
+  "firstName",
+  "lastName",
+  "email",
+  "subject",
+  "message",
+] as const satisfies readonly ContactField[];
+
+/** Echo submitted values back so the client can repopulate the form. */
+function submittedValues(
+  formData: FormData,
+): Partial<Record<ContactField, string>> {
+  const values: Partial<Record<ContactField, string>> = {};
+  for (const field of CONTACT_FIELDS) {
+    const value = formData.get(field);
+    if (typeof value === "string") values[field] = value;
+  }
+  return values;
+}
+
 export async function submitContact(
   _previous: ContactFormState,
   formData: FormData,
@@ -26,7 +46,7 @@ export async function submitContact(
         errors[field] = issue.message;
       }
     }
-    return { status: "error", errors };
+    return { status: "error", errors, values: submittedValues(formData) };
   }
 
   const { firstName, lastName, email, subject, message, company } = parsed.data;
@@ -53,6 +73,7 @@ export async function submitContact(
     return {
       status: "error",
       message: "Something went wrong sending your message. Please try again later.",
+      values: submittedValues(formData),
     };
   }
 
@@ -71,6 +92,7 @@ export async function submitContact(
         status: "error",
         message:
           "Something went wrong sending your message. Please try again later.",
+        values: submittedValues(formData),
       };
     }
     return { status: "success" };
@@ -79,6 +101,7 @@ export async function submitContact(
     return {
       status: "error",
       message: "Something went wrong sending your message. Please try again later.",
+      values: submittedValues(formData),
     };
   }
 }

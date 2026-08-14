@@ -15,7 +15,7 @@ export function SiteHeader() {
             alt=""
             width={48}
             height={48}
-            priority
+            loading="eager"
           />
         </Link>
         <NavLinks className="hidden items-center gap-8 md:flex" />

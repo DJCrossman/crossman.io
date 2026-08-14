@@ -25,4 +25,10 @@ export type ContactFormState =
       status: "error";
       message?: string;
       errors?: Partial<Record<ContactField, string>>;
+      /**
+       * Submitted values echoed back so the form can repopulate after an
+       * error — React 19 resets uncontrolled fields when a form action
+       * completes, even when it returns an error state.
+       */
+      values?: Partial<Record<ContactField, string>>;
     };
