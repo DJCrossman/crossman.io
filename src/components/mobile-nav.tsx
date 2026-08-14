@@ -19,10 +19,13 @@ export function MobileNav() {
   const pathname = usePathname();
 
   // Close the drawer whenever navigation happens, regardless of how the
-  // link click was dispatched.
-  React.useEffect(() => {
+  // link click was dispatched (state adjustment during render, per React
+  // docs, rather than an effect).
+  const [lastPathname, setLastPathname] = React.useState(pathname);
+  if (lastPathname !== pathname) {
+    setLastPathname(pathname);
     setOpen(false);
-  }, [pathname]);
+  }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
