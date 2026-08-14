@@ -4,6 +4,7 @@ import { Nunito, Nunito_Sans } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Toaster } from "@/components/ui/sonner";
+import { siteName, siteUrl } from "@/content/site";
 
 import "./globals.css";
 
@@ -20,9 +21,23 @@ const nunitoSans = Nunito_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "David Crossman",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: siteName,
+    template: `%s — ${siteName}`,
+  },
   description:
     "Canadian software developer with over ten years in tech, based in Regina, Saskatchewan.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName,
+    locale: "en_CA",
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
