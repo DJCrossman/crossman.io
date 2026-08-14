@@ -1,5 +1,6 @@
 "use server";
 
+import { headers } from "next/headers";
 import { Resend } from "resend";
 
 import {
@@ -7,6 +8,8 @@ import {
   type ContactField,
   type ContactFormState,
 } from "@/lib/contact-schema";
+import { checkContactToken } from "@/lib/contact-token";
+import { isRateLimited } from "@/lib/rate-limit";
 
 const TO_ADDRESS = "david@crossman.io";
 // Switch to contact@crossman.io once the domain is verified in Resend.
@@ -54,6 +57,37 @@ export async function submitContact(
   // Honeypot tripped: report success so bots learn nothing.
   if (company) {
     return { status: "success" };
+  }
+
+  // Minimum-fill-time check. "too-fast" means a signed token was minted
+  // less than MIN_FILL_MS ago — an instant-submit script. Treat it like
+  // the honeypot: fake success, send nothing. A missing/expired token is
+  // recoverable (a human may have left the tab open), so ask to resubmit;
+  // the form fetches a fresh token whenever an error comes back.
+  const tokenCheck = checkContactToken(formData.get("token"));
+  if (tokenCheck === "too-fast") {
+    return { status: "success" };
+  }
+  if (tokenCheck === "invalid") {
+    return {
+      status: "error",
+      message: "That took a while — please hit submit again.",
+      values: submittedValues(formData),
+    };
+  }
+
+  // Sliding-window rate limit by client IP (see rate-limit.ts for scope).
+  const requestHeaders = await headers();
+  const ip =
+    requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    requestHeaders.get("x-real-ip") ||
+    "unknown";
+  if (isRateLimited(ip)) {
+    return {
+      status: "error",
+      message: "You've sent a few messages already — please try again later.",
+      values: submittedValues(formData),
+    };
   }
 
   const apiKey = process.env.RESEND_API_KEY;
